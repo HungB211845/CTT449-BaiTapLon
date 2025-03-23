@@ -3,10 +3,14 @@ Xây dựng Website quản lý thư viện bằng Express.js, Node.js, Vue.js
 Phạm Gia Hưng B2111845 HK2 2024-2025
 
 Back-End/
+
 ├── app
 Điểm khởi đầu của ứng dụng Express.js.
+
 Thiết lập middleware, định tuyến và xử lý lỗi chung.
+
 Trung tâm điều phối yêu cầu và phản hồi.
+
 
 
 ├── config/ 
@@ -15,8 +19,11 @@ Trung tâm điều phối yêu cầu và phản hồi.
 ├── controllers/
 
 Xử lý logic nghiệp vụ cho các tuyến đường.
+
 Tương ứng với model và xử lý yêu cầu HTTP (GET, POST, PUT, DELETE).
+
 Ví dụ: docgia.controller.js xử lý yêu cầu liên quan đến độc giả.
+
 │   ├── auth.controller.js
 │   ├── docgia.controller.js
 │   ├── muonsach.controller.js
