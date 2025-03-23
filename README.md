@@ -16,6 +16,7 @@ Trung tâm điều phối yêu cầu và phản hồi.
 
 
 ├── config/ 
+
 │   └── db.config.js : Chứa thông tin kết nối cơ sở dữ liệu (ví dụ: MongoDB). 
 
 ├── controllers/
