@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Testing Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .container { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; border-radius: 5px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { padding: 10px 15px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background: #45a049; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+        .response { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>API Testing Tool</h1>
+    
+    <div class="container">
+        <h2>Delete Book Test</h2>
+        <div class="form-group">
+            <label for="bookId">Book ID (MaSach):</label>
+            <input type="text" id="bookId" placeholder="Enter book ID (e.g., S001)">
+        </div>
+        <div class="form-group">
+            <label for="tokenInput">Authentication Token (optional):</label>
+            <input type="text" id="tokenInput" placeholder="Bearer token if required">
+        </div>
+        <button onclick="deleteBook()">Delete Book</button>
+        
+        <div class="response">
+            <h3>Response:</h3>
+            <pre id="deleteResponse">No response yet</pre>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>List All Books</h2>
+        <button onclick="listBooks()">Get All Books</button>
+        
+        <div class="response">
+            <h3>Response:</h3>
+            <pre id="listResponse">No response yet</pre>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Find Book by ID</h2>
+        <div class="form-group">
+            <label for="findBookId">Book ID (MaSach):</label>
+            <input type="text" id="findBookId" placeholder="Enter book ID to find">
+        </div>
+        <button onclick="findBook()">Find Book</button>
+        
+        <div class="response">
+            <h3>Response:</h3>
+            <pre id="findResponse">No response yet</pre>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3000/api';
+        
+        async function deleteBook() {
+            const bookId = document.getElementById('bookId').value.trim();
+            const token = document.getElementById('tokenInput').value.trim();
+            const responseElement = document.getElementById('deleteResponse');
+            
+            if (!bookId) {
+                responseElement.textContent = 'Error: Please enter a book ID';
+                return;
+            }
+            
+            try {
+                responseElement.textContent = 'Sending request...';
+                
+                const url = `${API_BASE_URL}/sach/${bookId}`;
+                console.log('DELETE request to:', url);
+                
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                if (token) {
+                    headers['Authorization'] = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+                }
+                
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: headers
+                });
+                
+                const data = await response.json();
+                
+                responseElement.textContent = JSON.stringify({
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, null, 2);
+            } catch (error) {
+                responseElement.textContent = `Error: ${error.message}`;
+                console.error('Error deleting book:', error);
+            }
+        }
+        
+        async function listBooks() {
+            const responseElement = document.getElementById('listResponse');
+            
+            try {
+                responseElement.textContent = 'Loading books...';
+                
+                const response = await fetch(`${API_BASE_URL}/sach`);
+                const data = await response.json();
+                
+                responseElement.textContent = JSON.stringify({
+                    count: data.length,
+                    books: data.map(book => ({
+                        MaSach: book.MaSach,
+                        TenSach: book.TenSach
+                    }))
+                }, null, 2);
+            } catch (error) {
+                responseElement.textContent = `Error: ${error.message}`;
+                console.error('Error listing books:', error);
+            }
+        }
+
+        async function findBook() {
+            const bookId = document.getElementById('findBookId').value.trim();
+            const responseElement = document.getElementById('findResponse');
+            
+            if (!bookId) {
+                responseElement.textContent = 'Error: Please enter a book ID';
+                return;
+            }
+            
+            try {
+                responseElement.textContent = 'Searching for book...';
+                
+                const response = await fetch(`${API_BASE_URL}/sach?MaSach=${bookId}`);
+                const data = await response.json();
+                
+                if (data.length === 0) {
+                    responseElement.textContent = `No book found with ID: ${bookId}`;
+                } else {
+                    responseElement.textContent = JSON.stringify(data[0], null, 2);
+                }
+            } catch (error) {
+                responseElement.textContent = `Error: ${error.message}`;
+                console.error('Error finding book:', error);
+            }
+        }
+    </script>
+</body>
+</html>
